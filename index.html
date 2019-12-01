@@ -1,0 +1,91 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>HCI Prototypes</title>
+
+  <style>
+    .container {
+      margin: 80px auto 0;
+      width: 600px;
+    }
+
+    .screen {
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .controls {
+      margin-top: 20px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="container">
+    <img class="screen" />
+    <div class="controls">
+      <label>
+        <input type="checkbox" class="error"> edge case
+      </label>
+    </div>
+  </div>
+
+  <script>
+    const $screen = document.getElementsByClassName('screen')[0]
+    const $error = document.getElementsByClassName('error')[0]
+    let state = {
+      screen: 'scan',
+      error: false,
+    }
+
+    function nextState(currentState) {
+      nextScreen = 'scan'
+
+      if (currentState.screen === 'scan') {
+        if (currentState.error) {
+          nextScreen = 'empty'
+        } else {
+          nextScreen = 'suggestions'
+        }
+      } 
+      if (currentState.screen === 'suggestions') {
+        nextScreen = 'code'
+      }
+      if (currentState.screen === 'code') {
+        if (currentState.error) {
+          nextScreen = 'code-error'
+        } else {
+          nextScreen = 'done'
+        }
+      }
+
+      return {
+        ...currentState,
+        screen: nextScreen,
+      }
+    }
+
+    function render({screen, error}) {
+      $screen.setAttribute('src', `./images/${screen}.jpeg`)
+    }
+
+    $screen.addEventListener('click', function() {
+      state = nextState(state)
+      render(state)
+    })
+
+    $error.addEventListener('click', function() {
+      state = {
+        ...state,
+        error: !state.error,
+      }
+    })
+
+    render(state)
+  </script>
+</body>
+</html>
